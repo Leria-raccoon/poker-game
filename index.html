@@ -2,18 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
   <title>Poker Game</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5;  }
-    table { border-collapse: collapse; margin: 30px auto; background: #fff; box-shadow: 0 2px 8px #ccc; text-align:center}
-    th, td { border: 1px solid #bbb; padding: 4px 8px; text-align: center; min-width: 50px; }
-    th { background: #f0f0f0; width: 120px;}
-    input[type="text"] { width: 90%; text-align: center; border: none; background: #f9f9f9; }
-    input[type="text"]:focus { background: #e0f7fa; outline: 1px solid #26c6da; }
-    .btn { margin: 20px; padding: 8px 16px; font-size: 1rem; }
-    .readonly { background: #f0f0f0; font-weight: bold; }
-    #gameContainer{line-height: 1.0;}
-  </style>
 </head>
 <body>
   <div style="text-align:center;">
@@ -700,59 +690,30 @@ document.getElementById('counter').textContent='';
 </div>     
     
 <div class="col-2">
-<div>
 <input type="checkbox" name="box" value="one"  id ="one">
 </div>
 
-<div>
-<label for = "one">HOLD</label>
-</div>
-</div>
-
 <div class="col-2">
-<div>
 <input type="checkbox" name="box" value="two" id ="two" >
 </div>
 
-<div>
-<label for = "two">HOLD</label>
-</div>
-</div>
-
 <div class="col-2">
-<div>
 <input type="checkbox" name="box" value="three" id ="three" >
 </div>
 
-<div>
-<label for = "three">HOLD</label>
-</div>
-</div>
-
 <div class="col-2">
-<div>
+
 <input type="checkbox" name="box" value="four" id ="four" >
 </div>
 
-<div>
-<label for = "four">HOLD</label>
-</div>
-</div>
-
 <div class="col-2">
-<div>
-<input type="checkbox" name="box" value="five" id ="five" >
-</div>
 
-<div>
-<label for = "five">HOLD</label>
-</div>
+<input type="checkbox" name="box" value="five" id ="five" >
 </div>
 
 <div class="col-1">
 <div style="color:red" id="counter"></div>
 </div>
-
 
     </div>
  </div>
