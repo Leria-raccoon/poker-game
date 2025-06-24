@@ -15,6 +15,7 @@
   <div id="gameContainer"></div>
 
   <script>
+
     var numPlayers=0;
     const ROWS = [
       { label: "1", color: "#fff0f0", editable: true, group: "school" },
@@ -629,7 +630,20 @@ document.getElementById('counter').textContent='';
 // -->
 
 
-
+// Обработка клика на кубики (отмечаем чекбоксы без анимации)
+$(document).ready(function() {
+    // Вешаем обработчик на каждый кубик
+    $('[name="one"], [name="two"], [name="three"], [name="four"], [name="five"]').click(function(e) {
+        // Получаем имя кубика (one, two, three...)
+        const diceName = $(this).attr('name');
+        // Находим соответствующий чекбокс и переключаем его
+        const checkbox = $(`#${diceName}`);
+        checkbox.attr('checked', !checkbox.is(':checked'));
+        
+        // Отменяем всплытие, чтобы не срабатывала анимация
+        e.stopPropagation();
+    });
+});
 
 
 </script>
