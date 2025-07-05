@@ -25,7 +25,7 @@
     justify-content: center;
     gap: 20px;
     margin-top: 50px;
-    perspective: 1000px;
+    perspective: none;
 }
 
 .dice {
@@ -153,7 +153,8 @@ button {
     }
     
     // Функция броска кубиков
-    function rollDice() {
+    // вращаются на 365 градусов 
+    /* function rollDice() {
         const diceElements = document.querySelectorAll('.dice');
         
         diceElements.forEach(dice => {
@@ -174,9 +175,51 @@ button {
                 const finalRotation = getFinalRotation(result);
                 
                 dice.style.transform = `rotateX(${finalRotation.x}deg) rotateY(${finalRotation.y}deg)`;
-            }, 40);
+            }, 50);
         });
-    }
+    } */
+
+  function rollDice() {
+    const diceElements = document.querySelectorAll('.dice');
+    
+    diceElements.forEach(dice => {
+        // Сброс анимации
+        dice.style.transition = 'none';
+        dice.style.transform = 'rotateX(0deg)';
+        
+        // Быстрый старт вращения вокруг оси X
+        setTimeout(() => {
+            const result = Math.floor(Math.random() * 6) + 1;
+            const spinDuration = 1.5; // Секунды вращения
+            
+            // Правильные углы для каждой грани (только вперёд!)
+            const faceRotations = {
+                1: 0,    // Фронт
+                2: 90,    // Верх
+                5: -90,  // Низ
+                6: 180    // Зад
+            };
+            
+            // Всегда добавляем полные обороты в одном направлении
+            const fullSpins = 5; // Количество полных оборотов
+            const spinDegrees = faceRotations[result] + (360 * fullSpins);
+            
+            // Вращаем только вперёд
+            dice.style.transition = `transform ${spinDuration}s linear`;
+            dice.style.transform = `rotateX(${spinDegrees}deg)`;
+            
+            // Фиксация результата
+            setTimeout(() => {
+                dice.style.transition = 'transform 0.1s linear';
+                dice.style.transform = `rotateX(${faceRotations[result]}deg)`;
+            }, spinDuration * 1000);
+        }, 10);
+    });
+} 
+
+
+
+   
     
     // Функция для определения конечного вращения по результату
     function getFinalRotation(result) {
