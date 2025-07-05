@@ -179,47 +179,98 @@ button {
         });
     } */
 
-  function rollDice() {
+
+
+/* function rollDice() {
     const diceElements = document.querySelectorAll('.dice');
-    
-    diceElements.forEach(dice => {
-        // Сброс анимации
+
+    diceElements.forEach((dice, index) => {
+        // 1. Сброс анимации и случайный стартовый угол
         dice.style.transition = 'none';
-        dice.style.transform = 'rotateX(0deg)';
-        
-        // Быстрый старт вращения вокруг оси X
+        const randomStart = Math.floor(Math.random() * 360);
+        dice.style.transform = `rotateX(${randomStart}deg)`;
+
         setTimeout(() => {
             const result = Math.floor(Math.random() * 6) + 1;
-            const spinDuration = 1.5; // Секунды вращения
+            const spinDuration = 3 + Math.random() * 1; // 3–4 секунды (было 1.5–2)
             
-            // Правильные углы для каждой грани (только вперёд!)
+            // Углы для граней (X-ось)
             const faceRotations = {
                 1: 0,    // Фронт
-                2: 90,    // Верх
+                2: 90,   // Верх
+                3: 0,    // (можно добавить rotateY)
+                4: 0,
                 5: -90,  // Низ
-                6: 180    // Зад
+                6: 180   // Зад
             };
-            
-            // Всегда добавляем полные обороты в одном направлении
-            const fullSpins = 5; // Количество полных оборотов
-            const spinDegrees = faceRotations[result] + (360 * fullSpins);
-            
-            // Вращаем только вперёд
-            dice.style.transition = `transform ${spinDuration}s linear`;
-            dice.style.transform = `rotateX(${spinDegrees}deg)`;
-            
-            // Фиксация результата
+
+            // 2. Больше оборотов (7–8 вместо 5–6)
+            const fullSpins = 2 + Math.floor(Math.random() * 2); 
+            const targetRotation = faceRotations[result] + (360 * fullSpins);
+
+            // 3. Медленная анимация с ease-out
+            dice.style.transition = `transform ${spinDuration}s ease-out`;
+            dice.style.transform = `rotateX(${targetRotation}deg)`;
+
+            // 4. Рандомная задержка остановки (0–500 мс)
+            const randomDelay = Math.random() * 1000;
+
             setTimeout(() => {
-                dice.style.transition = 'transform 0.1s linear';
+                dice.style.transition = 'none';
                 dice.style.transform = `rotateX(${faceRotations[result]}deg)`;
-            }, spinDuration * 1000);
-        }, 10);
+            }, spinDuration * 1000 + randomDelay);
+        }, 50);
     });
-} 
+} */
 
+   function rollDice() {
+    const diceElements = document.querySelectorAll('.dice');
+    const totalDice = diceElements.length;
+    let stoppedDice = 0;
 
+    // Функция для остановки одного кубика
+    const stopDice = (dice, result) => {
+        const faceRotations = { 1: 0, 2: 90, 3: 0, 4: 0, 5: -90, 6: 180 };
+        
+        // Плавно доворачиваем до нужного угла БЕЗ отката
+        dice.style.transition = 'transform 0.5s ease-out';
+        dice.style.transform = `rotateX(${faceRotations[result]}deg)`;
+        
+        // После остановки увеличиваем счётчик
+        setTimeout(() => {
+            stoppedDice++;
+            if (stoppedDice === totalDice) {
+                console.log("Все кубики остановились!");
+            }
+        }, 500);
+    };
 
-   
+    // Запускаем анимацию для каждого кубика
+    diceElements.forEach((dice, index) => {
+        // 1. Сброс анимации и случайный старт
+        dice.style.transition = 'none';
+        const randomStart = Math.floor(Math.random() * 360);
+        dice.style.transform = `rotateX(${randomStart}deg)`;
+
+        // 2. Вращение с постоянной скоростью
+        const spinSpeed = 10; // градусов за шаг
+        let currentRotation = randomStart;
+        const spinInterval = setInterval(() => {
+            currentRotation += spinSpeed;
+            dice.style.transform = `rotateX(${currentRotation}deg)`;
+        }, 16); // ~60 FPS
+
+        // 3. Случайное время остановки (1-3 секунды)
+        const stopDelay = 1000 + Math.random() * 2000;
+        
+        setTimeout(() => {
+            // Генерируем результат и останавливаем кубик
+            const result = Math.floor(Math.random() * 6) + 1;
+            clearInterval(spinInterval);
+            stopDice(dice, result);
+        }, stopDelay);
+    });
+}
     
     // Функция для определения конечного вращения по результату
     function getFinalRotation(result) {
@@ -394,208 +445,6 @@ var fld= new Array('ones','twos','threes','fours','fives','sixes');
 var dice= new Array(94);
 
 //load dice images
-
-dice[0]= new Image();
-dice[0].src="dice/dice1-1.jpg";
-dice[1]= new Image();
-dice[1].src="dice/dice1-2.jpg";
-dice[2]= new Image();
-dice[2].src="dice/dice1-3.jpg";
-dice[3]= new Image();
-dice[3].src="dice/dice1-4.jpg";
-dice[4]= new Image();
-dice[4].src="dice/dice1-5.jpg";
-dice[5]= new Image();
-dice[5].src="dice/dice1-6.jpg";
-dice[6]= new Image();
-dice[6].src="dice/dice1-7.jpg";
-dice[7]= new Image();
-dice[7].src="dice/dice1-8.jpg";
-dice[8]= new Image();
-dice[8].src="dice/dice1-9.jpg";
-dice[9]= new Image();
-dice[9].src="dice/dice1-10.jpg";
-dice[10]= new Image();
-dice[10].src="dice/dice1-11.jpg";
-dice[11]= new Image();
-dice[11].src="dice/dice1-12.jpg";
-dice[12]= new Image();
-dice[12].src="dice/dice1-13.jpg";
-dice[13]= new Image();
-dice[13].src="dice/dice1-14.jpg";
-dice[14]= new Image();
-dice[14].src="dice/dice1-15.jpg";
-dice[15]= new Image();
-dice[15].src="dice/dice1-16.jpg";
-dice[16]= new Image();
-dice[16].src="dice/dice1-17.jpg";
-
-dice[17]= new Image();
-dice[17].src="dice/dice2-1.jpg";
-dice[18]= new Image();
-dice[18].src="dice/dice2-2.jpg";
-dice[19]= new Image();
-dice[19].src="dice/dice2-3.jpg";
-dice[20]= new Image();
-dice[20].src="dice/dice2-4.jpg";
-dice[21]= new Image();
-dice[21].src="dice/dice2-5.jpg";
-dice[22]= new Image();
-dice[22].src="dice/dice2-6.jpg";
-dice[23]= new Image();
-dice[23].src="dice/dice2-7.jpg";
-dice[24]= new Image();
-dice[24].src="dice/dice2-8.jpg";
-dice[25]= new Image();
-dice[25].src="dice/dice2-9.jpg";
-dice[26]= new Image();
-dice[26].src="dice/dice2-10.jpg";
-dice[27]= new Image();
-dice[27].src="dice/dice2-11.jpg";
-dice[28]= new Image();
-dice[28].src="dice/dice2-12.jpg";
-dice[29]= new Image();
-dice[29].src="dice/dice2-13.jpg";
-dice[30]= new Image();
-dice[30].src="dice/dice2-14.jpg";
-dice[31]= new Image();
-dice[31].src="dice/dice2-15.jpg";
-
-dice[32]= new Image();
-dice[32].src="dice/dice3-1.jpg";
-dice[33]= new Image();
-dice[33].src="dice/dice3-2.jpg";
-dice[34]= new Image();
-dice[34].src="dice/dice3-3.jpg";
-dice[35]= new Image();
-dice[35].src="dice/dice3-4.jpg";
-dice[36]= new Image();
-dice[36].src="dice/dice3-5.jpg";
-dice[37]= new Image();
-dice[37].src="dice/dice3-6.jpg";
-dice[38]= new Image();
-dice[38].src="dice/dice3-7.jpg";
-dice[39]= new Image();
-dice[39].src="dice/dice3-8.jpg";
-dice[40]= new Image();
-dice[40].src="dice/dice3-9.jpg";
-dice[41]= new Image();
-dice[41].src="dice/dice3-10.jpg";
-dice[42]= new Image();
-dice[42].src="dice/dice3-11.jpg";
-dice[43]= new Image();
-dice[43].src="dice/dice3-12.jpg";
-dice[44]= new Image();
-dice[44].src="dice/dice3-13.jpg";
-dice[45]= new Image();
-dice[45].src="dice/dice3-14.jpg";
-
-dice[46]= new Image();
-dice[46].src="dice/dice4-1.jpg";
-dice[47]= new Image();
-dice[47].src="dice/dice4-2.jpg";
-dice[48]= new Image();
-dice[48].src="dice/dice4-3.jpg";
-dice[49]= new Image();
-dice[49].src="dice/dice4-4.jpg";
-dice[50]= new Image();
-dice[50].src="dice/dice4-5.jpg";
-dice[51]= new Image();
-dice[51].src="dice/dice4-6.jpg";
-dice[52]= new Image();
-dice[52].src="dice/dice4-7.jpg";
-dice[53]= new Image();
-dice[53].src="dice/dice4-8.jpg";
-dice[54]= new Image();
-dice[54].src="dice/dice4-9.jpg";
-dice[55]= new Image();
-dice[55].src="dice/dice4-10.jpg";
-dice[56]= new Image();
-dice[56].src="dice/dice4-11.jpg";
-dice[57]= new Image();
-dice[57].src="dice/dice4-12.jpg";
-dice[58]= new Image();
-dice[58].src="dice/dice4-13.jpg";
-dice[59]= new Image();
-dice[59].src="dice/dice4-14.jpg";
-dice[60]= new Image();
-dice[60].src="dice/dice4-15.jpg";
-dice[61]= new Image();
-dice[61].src="dice/dice4-16.jpg";
-
-dice[62]= new Image();
-dice[62].src="dice/dice5-1.jpg";
-dice[63]= new Image();
-dice[63].src="dice/dice5-2.jpg";
-dice[64]= new Image();
-dice[64].src="dice/dice5-3.jpg";
-dice[65]= new Image();
-dice[65].src="dice/dice5-4.jpg";
-dice[66]= new Image();
-dice[66].src="dice/dice5-5.jpg";
-dice[67]= new Image();
-dice[67].src="dice/dice5-6.jpg";
-dice[68]= new Image();
-dice[68].src="dice/dice5-7.jpg";
-dice[69]= new Image();
-dice[69].src="dice/dice5-8.jpg";
-dice[70]= new Image();
-dice[70].src="dice/dice5-9.jpg";
-dice[71]= new Image();
-dice[71].src="dice/dice5-10.jpg";
-dice[72]= new Image();
-dice[72].src="dice/dice5-11.jpg";
-dice[73]= new Image();
-dice[73].src="dice/dice5-12.jpg";
-dice[74]= new Image();
-dice[74].src="dice/dice5-13.jpg";
-dice[75]= new Image();
-dice[75].src="dice/dice5-14.jpg";
-dice[76]= new Image();
-dice[76].src="dice/dice5-15.jpg";
-
-dice[77]= new Image();
-dice[77].src="dice/dice6-1.jpg";
-dice[78]= new Image();
-dice[78].src="dice/dice6-2.jpg";
-dice[79]= new Image();
-dice[79].src="dice/dice6-3.jpg";
-dice[80]= new Image();
-dice[80].src="dice/dice6-4.jpg";
-dice[81]= new Image();
-dice[81].src="dice/dice6-5.jpg";
-dice[82]= new Image();
-dice[82].src="dice/dice6-6.jpg";
-dice[83]= new Image();
-dice[83].src="dice/dice6-7.jpg";
-dice[84]= new Image();
-dice[84].src="dice/dice6-8.jpg";
-dice[85]= new Image();
-dice[85].src="dice/dice6-9.jpg";
-dice[86]= new Image();
-dice[86].src="dice/dice6-10.jpg";
-dice[87]= new Image();
-dice[87].src="dice/dice6-11.jpg";
-dice[88]= new Image();
-dice[88].src="dice/dice6-12.jpg";
-dice[89]= new Image();
-dice[89].src="dice/dice6-13.jpg";
-dice[90]= new Image();
-dice[90].src="dice/dice6-14.jpg";
-dice[91]= new Image();
-dice[91].src="dice/dice6-15.jpg";
-dice[92]= new Image();
-dice[92].src="dice/dice6-16.jpg";
-dice[93]= new Image();
-dice[93].src="dice/dice6-17.jpg";
-
-
-
-
-
-
-
-
 
 //random number generator 
 
