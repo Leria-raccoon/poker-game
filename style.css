@@ -1,7 +1,12 @@
  body {
      font-family: Arial,
          sans-serif;
-     background: #f5f5f5;
+     
+     user-select: none; /* Запрет выделения текста */
+    -webkit-user-select: none; /* Для Safari */
+    -moz-user-select: none; /* Для Firefox */
+    -ms-user-select: none; /* Для IE/Edge */
+    background-color: #6e7c88 !important; /* AliceBlue */
  }
 
  table {
@@ -51,4 +56,3 @@
  #gameContainer {
      line-height: 1.0;
  }
- 
