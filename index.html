@@ -152,6 +152,66 @@ button {
         diceContainer.appendChild(dice);
     }
     
+    // Добавляем обработчик для кнопки броска
+    rollButton.addEventListener('click', function() {
+        rollDice();
+    });
+    
+    // Выносим функцию rollDice в глобальную область видимости
+    window.rollDice = function() {
+        const diceElements = document.querySelectorAll('.dice');
+        const totalDice = diceElements.length;
+        let stoppedDice = 0;
+
+        const stopDice = (dice, result, currentRotation, spinInterval) => {
+            clearInterval(spinInterval);
+            
+            const faceRotations = {
+                1: 0,    // 1
+                2: 90,   // 2
+                3: 0,     // 3
+                4: 0,     // 4
+                5: -90,   // 5
+                6: 180    // 6
+            };
+            
+            const targetRotation = faceRotations[result];
+            const fullRotations = 2;
+            const finalRotation = targetRotation + 360 * fullRotations;
+            
+            dice.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.7, 0.3, 1)';
+            dice.style.transform = `rotateX(${finalRotation}deg)`;
+            
+            setTimeout(() => {
+                stoppedDice++;
+                if (stoppedDice === totalDice) {
+                    console.log("Все кубики остановились!");
+                }
+            }, 1500);
+        };
+
+        diceElements.forEach((dice) => {
+            dice.style.transition = 'none';
+            const randomStart = Math.floor(Math.random() * 360);
+            dice.style.transform = `rotateX(${randomStart}deg)`;
+
+            const spinSpeed = 10;
+            let currentRotation = randomStart;
+            const spinInterval = setInterval(() => {
+                currentRotation += spinSpeed;
+                dice.style.transform = `rotateX(${currentRotation % 360}deg)`;
+            }, 16);
+
+            const stopDelay = 1500 + Math.random() * 2000;
+            
+            setTimeout(() => {
+                const result = Math.floor(Math.random() * 6) + 1;
+                stopDice(dice, result, currentRotation, spinInterval);
+            }, stopDelay);
+        });
+    };
+});
+    
     // Функция броска кубиков
     // вращаются на 365 градусов 
     /* function rollDice() {
@@ -223,71 +283,69 @@ button {
     });
 } */
 
-   function rollDice() {
+function rollDice() {
     const diceElements = document.querySelectorAll('.dice');
     const totalDice = diceElements.length;
     let stoppedDice = 0;
 
-    // Функция для остановки одного кубика
-    const stopDice = (dice, result) => {
-        const faceRotations = { 1: 0, 2: 90, 3: 0, 4: 0, 5: -90, 6: 180 };
+    // Функция для плавного замедления и остановки кубика
+    const stopDice = (dice, result, currentRotation, spinInterval) => {
+        clearInterval(spinInterval);
         
-        // Плавно доворачиваем до нужного угла БЕЗ отката
-        dice.style.transition = 'transform 0.5s ease-out';
-        dice.style.transform = `rotateX(${faceRotations[result]}deg)`;
+        const faceRotations = {
+            1: 0,    // 1
+            2: 90,   // 2 (поворот на 90°)
+            3: 0,    // 3 (дополнительный поворот может потребоваться)
+            4: 0,    // 4
+            5: -90,  // 5 (поворот на -90°)
+            6: 180   // 6 (поворот на 180°)
+        };
         
-        // После остановки увеличиваем счётчик
+        // Вычисляем целевую ротацию для выпавшей грани
+        const targetRotation = faceRotations[result];
+        
+        // Вычисляем кратчайший путь к целевой ротации
+        // Добавляем несколько полных оборотов для эффекта замедления
+        const fullRotations = 2; // Количество дополнительных полных оборотов
+        const finalRotation = targetRotation + 360 * fullRotations;
+        
+        // Плавное замедление с ease-out
+        dice.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.7, 0.3, 1)';
+        dice.style.transform = `rotateX(${finalRotation}deg)`;
+        
+        // После остановки
         setTimeout(() => {
             stoppedDice++;
             if (stoppedDice === totalDice) {
                 console.log("Все кубики остановились!");
             }
-        }, 500);
+        }, 1500);
     };
 
     // Запускаем анимацию для каждого кубика
-    diceElements.forEach((dice, index) => {
+    diceElements.forEach((dice) => {
         // 1. Сброс анимации и случайный старт
         dice.style.transition = 'none';
         const randomStart = Math.floor(Math.random() * 360);
         dice.style.transform = `rotateX(${randomStart}deg)`;
 
         // 2. Вращение с постоянной скоростью
-        const spinSpeed = 10; // градусов за шаг
+        const spinSpeed = 10; // немного уменьшил скорость для плавности
         let currentRotation = randomStart;
         const spinInterval = setInterval(() => {
             currentRotation += spinSpeed;
-            dice.style.transform = `rotateX(${currentRotation}deg)`;
-        }, 16); // ~60 FPS
+            dice.style.transform = `rotateX(${currentRotation % 360}deg)`;
+        }, 16);
 
-        // 3. Случайное время остановки (1-3 секунды)
-        const stopDelay = 1000 + Math.random() * 2000;
+        // 3. Случайное время остановки (1.5-3.5 секунды)
+        const stopDelay = 1500 + Math.random() * 2000;
         
         setTimeout(() => {
-            // Генерируем результат и останавливаем кубик
             const result = Math.floor(Math.random() * 6) + 1;
-            clearInterval(spinInterval);
-            stopDice(dice, result);
+            stopDice(dice, result, currentRotation, spinInterval);
         }, stopDelay);
     });
 }
-    
-    // Функция для определения конечного вращения по результату
-    function getFinalRotation(result) {
-        const rotations = {
-            1: { x: 0, y: 0 },      // front
-            2: { x: -90, y: 0 },    // top
-            3: { x: 0, y: 90 },     // left
-            4: { x: 0, y: -90 },    // right
-            5: { x: 90, y: 0 },     // bottom
-            6: { x: 0, y: 180 }      // back
-        };
-        return rotations[result];
-    }
-    
-    // Обработчик клика
-    rollButton.addEventListener('click', rollDice);
-});
 
     var numPlayers=0;
     const ROWS = [
