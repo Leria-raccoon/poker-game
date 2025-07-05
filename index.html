@@ -176,10 +176,10 @@ button {
             };
             
             const targetRotation = faceRotations[result];
-            const fullRotations = 2;
+            const fullRotations = 1;
             const finalRotation = targetRotation + 360 * fullRotations;
             
-            dice.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.7, 0.3, 1)';
+            dice.style.transition = 'transform 3s cubic-bezier(0.3, 0.8, 0.3, 1)';
             dice.style.transform = `rotateX(${finalRotation}deg)`;
             
             setTimeout(() => {
@@ -288,30 +288,15 @@ function rollDice() {
     const totalDice = diceElements.length;
     let stoppedDice = 0;
 
-    // Функция для плавного замедления и остановки кубика
-    const stopDice = (dice, result, currentRotation, spinInterval) => {
-        clearInterval(spinInterval);
+    // Функция для остановки одного кубика
+    const stopSingleDice = (dice) => {
+        const result = Math.floor(Math.random() * 6) + 1;
+        const faceRotations = { 1: 0, 2: 90, 3: 0, 4: 0, 5: -90, 6: 180 };
+        const targetRotation = faceRotations[result] + 360 * 3; // 3 оборота перед остановкой
         
-        const faceRotations = {
-            1: 0,    // 1
-            2: 90,   // 2 (поворот на 90°)
-            3: 0,    // 3 (дополнительный поворот может потребоваться)
-            4: 0,    // 4
-            5: -90,  // 5 (поворот на -90°)
-            6: 180   // 6 (поворот на 180°)
-        };
-        
-        // Вычисляем целевую ротацию для выпавшей грани
-        const targetRotation = faceRotations[result];
-        
-        // Вычисляем кратчайший путь к целевой ротации
-        // Добавляем несколько полных оборотов для эффекта замедления
-        const fullRotations = 2; // Количество дополнительных полных оборотов
-        const finalRotation = targetRotation + 360 * fullRotations;
-        
-        // Плавное замедление с ease-out
-        dice.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.7, 0.3, 1)';
-        dice.style.transform = `rotateX(${finalRotation}deg)`;
+        // Плавное замедление
+        dice.style.transition = 'transform 3s cubic-bezier(0.2, 0.7, 0.3, 1)';
+        dice.style.transform = `rotateX(${targetRotation}deg)`;
         
         // После остановки
         setTimeout(() => {
@@ -319,31 +304,32 @@ function rollDice() {
             if (stoppedDice === totalDice) {
                 console.log("Все кубики остановились!");
             }
-        }, 1500);
+        }, 9000);
     };
 
-    // Запускаем анимацию для каждого кубика
-    diceElements.forEach((dice) => {
-        // 1. Сброс анимации и случайный старт
+    // Запускаем вращение всех кубиков
+    const spinIntervals = [];
+    diceElements.forEach((dice, index) => {
+        // Сброс анимации
         dice.style.transition = 'none';
         const randomStart = Math.floor(Math.random() * 360);
         dice.style.transform = `rotateX(${randomStart}deg)`;
 
-        // 2. Вращение с постоянной скоростью
-        const spinSpeed = 10; // немного уменьшил скорость для плавности
+        // Вращение с постоянной скоростью
+        const spinSpeed = 10;
         let currentRotation = randomStart;
-        const spinInterval = setInterval(() => {
+        spinIntervals[index] = setInterval(() => {
             currentRotation += spinSpeed;
             dice.style.transform = `rotateX(${currentRotation % 360}deg)`;
-        }, 16);
+        }, 20);
+    });
 
-        // 3. Случайное время остановки (1.5-3.5 секунды)
-        const stopDelay = 1500 + Math.random() * 2000;
-        
+    // Останавливаем кубики по одному с интервалом 4 секунды
+    diceElements.forEach((dice, index) => {
         setTimeout(() => {
-            const result = Math.floor(Math.random() * 6) + 1;
-            stopDice(dice, result, currentRotation, spinInterval);
-        }, stopDelay);
+            clearInterval(spinIntervals[index]); // Останавливаем вращение
+            stopSingleDice(dice); // Запускаем плавное замедление
+        }, 10000 * index); // Первый через 0 сек, второй через 4 сек и т.д.
     });
 }
 
